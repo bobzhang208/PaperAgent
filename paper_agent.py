@@ -174,6 +174,39 @@ def build_paper_list(
     return {"queries": queries, "papers": result}
 
 
+def print_results(results: dict[str, list]):
+    """Prints the search queries and papers with color formatting."""
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
+    RESET = "\033[0m"
+    SEPARATOR = "=" * 80
+
+    print(f"{BLUE}Generated Search Queries:{RESET}")
+    if results['queries']:
+        for query in results['queries']:
+            print(f"{BLUE}- {query}{RESET}")
+    else:
+        print(f"{BLUE}- (No queries generated){RESET}")
+    print("---")  # This separator can remain as is or be changed/removed if desired.
+
+    papers_list = results['papers']
+    if not papers_list:
+        print(f"{GREEN}No papers found for the given topic.{RESET}")
+    else:
+        print(f"{GREEN}Papers:{RESET}")  # Adding a "Papers" header in green
+        for i, paper in enumerate(papers_list):
+            if i > 0:  # Add separator for subsequent papers
+                print(f"{GREEN}{SEPARATOR}{RESET}")
+            print(f"{GREEN}Title: {paper['title']}{RESET}")
+            authors = paper.get('authors', [])
+            if isinstance(authors, list):
+                print(f"{GREEN}Authors: {', '.join(authors)}{RESET}")
+            else:
+                print(f"{GREEN}Authors: {authors}{RESET}")
+            print(f"{GREEN}Published: {paper['published']}{RESET}")
+            print(f"{GREEN}Summary (CN): {paper['summary_cn']}{RESET}")
+
+
 def main():
     parser = argparse.ArgumentParser(description='Retrieve recent arXiv papers.')
     parser.add_argument('topic', help='Topic to search for')
@@ -197,30 +230,7 @@ def main():
         per_query=args.per_query,
     )
 
-    print("Generated Search Queries:")
-    if results['queries']:
-        for query in results['queries']:
-            print(f"- {query}")
-    else:
-        print("- (No queries generated)") # Handle case of no queries
-    print("---")
-
-    papers_list = results['papers']
-    if not papers_list:
-        print("No papers found for the given topic.")
-    else:
-        for i, paper in enumerate(papers_list):
-            if i > 0:  # Add separator for subsequent papers
-                print("---")
-            print(f"Title: {paper['title']}")
-            # Ensure authors is a list and join, handle if not a list (though it should be)
-            authors = paper.get('authors', [])
-            if isinstance(authors, list):
-                print(f"Authors: {', '.join(authors)}")
-            else: # Should not happen based on current code, but good for robustness
-                print(f"Authors: {authors}")
-            print(f"Published: {paper['published']}")
-            print(f"Summary (CN): {paper['summary_cn']}")
+    print_results(results)
 
 
 if __name__ == '__main__':
