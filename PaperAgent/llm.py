@@ -1,8 +1,6 @@
 from openai import OpenAI
 from tqdm import tqdm
 
-from utils import _extract_json_array
-
 
 class LLM:
     def __init__(self, api_key: str, base_url: str, model: str):
@@ -19,7 +17,7 @@ class LLM:
         return resp.choices[0].message.content.strip()
 
 
-class LLMClient(LLM):
+class PaperAgentLLM(LLM):
     def __init__(self, api_key: str, base_url: str, model: str = "gpt-3.5-turbo"):
         super().__init__(api_key, base_url, model)
 
@@ -39,7 +37,7 @@ class LLMClient(LLM):
             )
 
         scored_papers = []
-        for i, paper in enumerate(tqdm(papers)):
+        for i, paper in enumerate(tqdm(papers, desc="Ranking papers")):
             prompt = build_score_prompt(topic, paper["title"], paper["summary"])
             score_text = self.generate(prompt).strip()
             try:

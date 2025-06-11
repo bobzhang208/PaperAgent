@@ -1,38 +1,43 @@
 # Paper Agent
 
-使用 `smolagent` 框架思路实现的一个自动检索整理论文的工作流示例。该脚本会从 arXiv 上检索用户指定主题的最新论文，并返回包含如下信息的列表：
+**Paper Agent** 是一个基于大语言模型（LLM）的论文检索与摘要翻译工具，支持从 arXiv 获取最新论文并按主题相关度进行排序和翻译。
 
-- 论文标题
-- 作者及其单位（如果 arXiv 提供）
-- 论文摘要的中文翻译
-- 论文的发表日期
+## ✨ 功能特点
 
-## 安装依赖
+- 自动检索与指定主题相关的最新论文（基于 arXiv 数据）
+- 使用 LLM 评估论文与主题的相关度，并进行智能排序
+- 提供论文标题、作者信息（如 arXiv 提供）、摘要中文翻译、发表时间等信息
+- 可自定义模型、接口地址与返回数量
 
-脚本依赖 `openai` 包用于调用兼容的 LLM 接口完成翻译，使用前需先安装：
+![功能演示](Fig/example.jpg)
+
+## 📦 安装依赖
 
 ```bash
-pip install openai
+pip install -r requirements.txt
 ```
 
-## 使用方法
+## 🚀 使用方法
 
 ```bash
 python paper_agent.py "查询主题" \
   --max-results 5 \
-  --num-queries 3 \
-  --per-query 5 \
   --api-key YOUR_API_KEY \
   --base-url https://api.deepseek.com \
   --model deepseek-chat
 ```
 
-- `查询主题`：需要检索的论文主题关键词，例如 `LLM推理优化`。
-- `--max-results`：最终输出的论文数量，默认 5 篇。
-- `--num-queries`：由主题生成的检索子查询数量，默认 3 个。
-- `--per-query`：每个子查询从 arXiv 检索的论文数量，默认 5 篇。
-- `--api-key`：用于翻译的 LLM 服务 API Key。
-- `--base-url`：可选参数，指定与 OpenAI 接口兼容的服务地址，例如 DeepSeek。
-- `--model`：调用翻译 API 所用的模型名称，默认 `deepseek-chat`。
+### 参数说明
 
-执行后脚本将输出包含论文标题、作者及机构、发表日期以及中文摘要的 JSON 列表。脚本会先利用 LLM 生成多条检索语句并对结果排序，内部会自动从回复中提取 JSON 数组，因此对模型回复中的附加文本具有一定容错能力。
+- `"查询主题"`：要检索的论文关键词（如 `"LLM推理优化"`）。
+- `--max-results`：最终输出的论文数量（默认值为 5）。
+- `--api-key`：用于调用翻译模型的 API 密钥。
+- `--base-url`：可选，指定兼容 OpenAI 接口的服务地址（如 DeepSeek、Moonshot 等）。
+- `--model`：用于翻译和相关性评估的模型名称。
+
+## ⚠️ 注意事项
+
+- 本工具使用 `arxiv` 库进行论文检索，需确保本地网络连接稳定。
+- `arxiv` 会检索约 `10 × max-results` 篇论文作为候选集。
+- 所有候选论文将逐一由 LLM 进行相关度评分，该过程会调用多次接口，请合理评估 token 消耗。
+

@@ -16,7 +16,7 @@ def _extract_json_array(text: str) -> list:
 def print_results(results: dict[str, list]):
     """Prints the search queries and papers with color formatting."""
     BLUE = "\033[94m"
-    GREEN = "\033[92m"
+    ORANGE = "\033[33m"
     RESET = "\033[0m"
     SEPARATOR = "=" * 80
 
@@ -26,21 +26,21 @@ def print_results(results: dict[str, list]):
             print(f"{BLUE}- {query}{RESET}")
     else:
         print(f"{BLUE}- (No queries generated){RESET}")
-    print(SEPARATOR)  # This separator can remain as is or be changed/removed if desired.
+    print(SEPARATOR)
 
     papers_list = results['papers']
     if not papers_list:
-        print(f"{GREEN}No papers found for the given topic.{RESET}")
+        print(f"{ORANGE}No papers found for the given topic.{RESET}")
     else:
-        print(f"{GREEN}Papers:{RESET}")  # Adding a "Papers" header in green
+        print(f"{ORANGE}Papers:{RESET}")
         for i, paper in enumerate(papers_list):
-            if i > 0:  # Add separator for subsequent papers
-                print(f"{GREEN}{SEPARATOR}{RESET}")
-            print(f"{GREEN}Title: {paper['title']}{RESET}")
+            if i > 0:
+                print(f"{ORANGE}{SEPARATOR}{RESET}")
+            print(f"{ORANGE}Title: {paper['title']}{RESET}")
             authors = paper.get('authors', [])
             if isinstance(authors, list):
-                print(f"{GREEN}Authors: {', '.join(authors)}{RESET}")
+                print(f"{ORANGE}Authors: {', '.join(authors)}{RESET}")
             else:
-                print(f"{GREEN}Authors: {authors}{RESET}")
-            print(f"{GREEN}Published: {paper['published']}{RESET}")
-            print(f"{GREEN}Summary (CN): {paper['summary_cn']}{RESET}")
+                print(f"{ORANGE}Authors: {authors}{RESET}")
+            print(f"{ORANGE}Published: {paper['published']}{RESET}")
+            print(f"{ORANGE}Summary (CN): {paper['summary_cn']}{RESET}")
